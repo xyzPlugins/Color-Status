@@ -1,4 +1,4 @@
-rootProject.name = "ColorStatus"
+rootProject.name = "XColor"
 
 
 pluginManagement {

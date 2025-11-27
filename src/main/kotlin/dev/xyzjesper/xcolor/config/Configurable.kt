@@ -1,4 +1,4 @@
-package xyz.tnsjesper.colorstatus.config
+package dev.xyzjesper.xcolor.config
 
 interface Configurable {
     fun save()

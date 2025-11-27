@@ -1,10 +1,11 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     kotlin("jvm") version "2.+"
     id("xyz.jpenilla.run-paper") version "2.+"
     kotlin("plugin.serialization") version "2.+"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.+"
+    id("net.minecrell.plugin-yml.paper") version "0.6.+"
     id("com.gradleup.shadow") version "8.+"
 }
 
@@ -25,12 +26,12 @@ version = properties["version"] as String
 description = properties["description"] as String
 
 val gameVersion by properties
-val foliaSupport = properties["foliaSupport"] as String == "true"
 val projectName = properties["name"] as String
+val pluginMain = properties["main"] as String
 
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${gameVersion}-R0.1-SNAPSHOT")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.+")
@@ -38,9 +39,9 @@ dependencies {
 
     implementation("net.kyori", "adventure-text-minimessage", "4.+")
 
-    implementation("dev.jorel:commandapi-bukkit-kotlin:10.+")
-    compileOnly("dev.jorel:commandapi-bukkit-core:10.+")
-    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.+")
+    implementation("dev.jorel:commandapi-kotlin-paper:11.0.0")
+    compileOnly("dev.jorel:commandapi-paper-core:11.0.0")
+    implementation("dev.jorel:commandapi-paper-shade:11.0.0")
 
     compileOnly("me.clip:placeholderapi:2.11.6")
 
@@ -52,7 +53,7 @@ kotlin {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion(gameVersion as String)
     }
     assemble {
         dependsOn(shadowJar)
@@ -62,7 +63,7 @@ tasks {
         options.release.set(21)
     }
     compileKotlin {
-        kotlinOptions.jvmTarget = "21"
+
     }
 }
 
@@ -72,16 +73,17 @@ tasks.jar {
     }
 }
 
-bukkit {
-    main = "$group.${projectName.lowercase()}.${projectName}"
-    apiVersion = "1.20"
-    foliaSupported = foliaSupport
-    website = "https://modrinth.com/plugin/color-status"
+paper {
+    main = pluginMain
+    apiVersion = "1.21"
+    website = "https://modrinth.com/plugin/xcolor"
     authors = listOf("xyzjesper")
-
     // Optionals
-    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
-    depend = listOf()
-    softDepend = listOf("PlaceholderAPI")
-    libraries = listOf()
+    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    serverDependencies {
+        register("PlaceholderAPI") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
 }

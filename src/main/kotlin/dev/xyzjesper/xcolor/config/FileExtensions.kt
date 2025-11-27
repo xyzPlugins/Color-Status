@@ -1,4 +1,4 @@
-package xyz.tnsjesper.colorstatus.config
+package dev.xyzjesper.xcolor.config
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
